@@ -1,0 +1,30 @@
+.CodeMirror {
+    height: 90vh;
+    border-radius: 0.375rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Custom scrollbar for CodeMirror */
+.CodeMirror-scrollbar-filler {
+    background-color: transparent;
+}
+
+.CodeMirror-simplescroll-horizontal,
+.CodeMirror-simplescroll-vertical {
+    background: #1e1e1e;
+    border: none;
+}
+
+.CodeMirror-simplescroll-horizontal div,
+.CodeMirror-simplescroll-vertical div {
+    background: #3e3e3e;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Active line highlighting */
+.CodeMirror-activeline-background {
+    background: rgba(255, 255, 255, 0.05) !important;
+}

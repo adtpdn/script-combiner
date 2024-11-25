@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Combiner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror-one-dark-theme@1.1.1/one-dark.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <div class="flex min-h-screen p-4">
+        <!-- Sidebar -->
+        <div class="w-72 bg-gray-800 rounded-lg p-4 mr-4 flex flex-col">
+            <h2 class="text-xl font-bold mb-4 text-gray-100">Files & Sections</h2>
+            
+            <!-- File Type Filters -->
+            <div class="mb-4 flex flex-wrap gap-2">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" checked class="form-checkbox text-yellow-500" id="filter-gd">
+                    <span class="file-type-gd">.gd</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" checked class="form-checkbox text-green-500" id="filter-tscn">
+                    <span class="file-type-tscn">.tscn</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" checked class="form-checkbox text-blue-500" id="filter-tres">
+                    <span class="file-type-tres">.tres</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" checked class="form-checkbox text-purple-500" id="filter-res">
+                    <span class="file-type-res">.res</span>
+                </label>
+            </div>
+
+            <!-- Drop Zone -->
+            <div id="dropZone" 
+                 class="border-2 border-dashed border-gray-600 rounded-lg p-4 mb-4 text-center hover:border-blue-500 transition-colors">
+                <p class="text-sm text-gray-400">Drag & Drop Godot files here</p>
+                <p class="text-xs text-gray-500 mt-1">Supported: .gd, .tscn, .tres, .res</p>
+                <button onclick="loadFile()" 
+                        class="mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-3 rounded-md transition-colors">
+                    Browse Files
+                </button>
+            </div>
+            
+            <!-- Outline List -->
+            <div id="outline" class="flex-grow overflow-y-auto"></div>
+            
+            <!-- Button Container -->
+            <div class="flex gap-2 mt-4">
+                <button onclick="downloadFile()" 
+                        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
+                    Download
+                </button>
+            </div>
+            <input type="file" id="fileInput" class="hidden" multiple accept=".gd,.tscn,.tres,.res" onchange="handleFileSelect(event)">
+        </div>
+
+        <!-- Editor Container -->
+        <div class="flex-grow">
+            <textarea id="editor"></textarea>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
