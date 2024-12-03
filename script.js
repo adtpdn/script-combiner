@@ -11,7 +11,7 @@ const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
 });
 
 // File type validation
-const VALID_EXTENSIONS = ['.gd', '.tscn', '.tres', '.res', '.py', '.json', '.js', '.ts', '.json'];
+const VALID_EXTENSIONS = ['.gd', '.tscn', '.tres', '.res', '.py', '.yaml', '.js', '.ts', '.json'];
 
 function getFileTypeClass(filename) {
     const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
@@ -112,7 +112,7 @@ async function handleFileSelect(event) {
         .sort((a, b) => a.name.localeCompare(b.name));
 
     if (validFiles.length === 0) {
-        alert('Please select valid Godot files (.gd, .tscn, .tres, .res, .py, .json, .js, .ts, .json)');
+        alert('Please select valid Godot files (.gd, .tscn, .tres, .res, .py, .yaml, .js, .ts, .json)');
         resetDropZone();
         return;
     }
@@ -201,7 +201,7 @@ function showLoading() {
 function resetDropZone() {
     dropZone.innerHTML = `
         <p class="text-sm text-gray-400">Drag & Drop Godot files here</p>
-        <p class="text-xs text-gray-500 mt-1">Supported: .gd, .tscn, .tres, .res, .py, .json, .js, .ts, .json</p>
+        <p class="text-xs text-gray-500 mt-1">Supported: .gd, .tscn, .tres, .res, .py, .yaml, .js, .ts, .json</p>
         <button onclick="loadFile()" 
                 class="mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-3 rounded-md transition-colors">
             Browse Files
