@@ -1,6 +1,21 @@
+// script.js
+const VALID_EXTENSIONS = [
+    '.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.scss', '.sass', '.less', 
+    '.vue', '.svelte', '.astro', '.webp', '.wasm', '.json', '.yaml', '.yml', 
+    '.toml', '.xml', '.env', '.ini', '.conf', '.config', '.lock', '.md', '.csv', 
+    '.sql', '.sqlite', '.gd', '.gdscript', '.tscn', '.tres', '.res', '.import', 
+    '.cfg', '.godot', '.cs', '.unity', '.prefab', '.mat', '.asset', '.meta', 
+    '.anim', '.controller', '.physicMaterial', '.mixer', '.shadergraph', '.shader', 
+    '.uasset', '.umap', '.cpp', '.h', '.uplugin', '.uproject', '.blueprint', 
+    '.umeta', '.ini', '.ue4', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.mp3', 
+    '.wav', '.ogg', '.ttf', '.otf', '.glb', '.gltf', '.obj', '.fbx',
+    '.py', '.pyw', '.pyc', '.pyo', '.pyx',
+    '.go', '.mod', '.sum'
+];
+
 // Initialize CodeMirror
 const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-    mode: "python",
+    mode: "text",
     theme: "one-dark",
     lineNumbers: true,
     indentUnit: 4,
@@ -8,22 +23,106 @@ const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     lineWrapping: true,
     autoCloseBrackets: true,
     matchBrackets: true,
+    indentWithTabs: false,
+    smartIndent: true,
+    extraKeys: {
+        "Tab": function(cm) {
+            if (cm.somethingSelected()) {
+                cm.indentSelection("add");
+            } else {
+                // Use tabs for Go, spaces for others
+                const mode = cm.getOption("mode");
+                if (mode === "go") {
+                    cm.replaceSelection("\t");
+                } else {
+                    cm.replaceSelection("    ");
+                }
+            }
+        }
+    }
 });
 
-// File type validation
-const VALID_EXTENSIONS = ['.gd', '.tscn', '.tres', '.res', '.py', '.yaml', '.js', '.ts', '.json'];
-
-function getFileTypeClass(filename) {
+function getFileMode(filename) {
     const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
-    return `file-type-${ext.substring(1)}`;
+    const modeMap = {
+        '.js': 'javascript',
+        '.jsx': 'jsx',
+        '.ts': 'javascript',
+        '.tsx': 'jsx',
+        '.html': 'html',
+        '.css': 'css',
+        '.scss': 'css',
+        '.sass': 'css',
+        '.less': 'css',
+        '.vue': 'vue',
+        '.xml': 'xml',
+        '.md': 'markdown',
+        '.py': 'python',
+        '.pyw': 'python',
+        '.pyc': 'python',
+        '.pyo': 'python',
+        '.pyx': 'python',
+        '.cpp': 'clike',
+        '.h': 'clike',
+        '.cs': 'clike',
+        '.json': 'javascript',
+        '.yaml': 'yaml',
+        '.yml': 'yaml',
+        '.toml': 'toml',
+        '.go': 'go',
+        '.mod': 'go',
+        '.sum': 'go'
+    };
+    return modeMap[ext] || 'text';
 }
 
-// Function to get section content
-function getSectionContent(startIndex, endIndex, lines) {
-    return lines.slice(startIndex, endIndex).join('\n');
+function generateFileTypeFilters() {
+    const filterContainer = document.querySelector('#filterAccordionContent .flex');
+    filterContainer.innerHTML = '';
+    
+    VALID_EXTENSIONS.forEach(ext => {
+        const extName = ext.substring(1);
+        const label = document.createElement('label');
+        label.className = 'flex items-center space-x-2 hover:bg-gray-600/50 p-1 rounded cursor-pointer';
+        label.innerHTML = `
+            <input type="checkbox" checked class="form-checkbox text-blue-500" id="filter-${extName}">
+            <span class="file-type-${extName}">${ext}</span>
+        `;
+        filterContainer.appendChild(label);
+    });
 }
 
-// Function to update the outline
+function setupAccordion() {
+    const button = document.getElementById('filterAccordionBtn');
+    const content = document.getElementById('filterAccordionContent');
+    const icon = document.getElementById('filterAccordionIcon');
+    let isOpen = false; // Start closed
+
+    function toggleAccordion() {
+        isOpen = !isOpen;
+        if (isOpen) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            content.style.opacity = '1';
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            content.style.maxHeight = '0';
+            content.style.opacity = '0';
+            icon.style.transform = 'rotate(-90deg)';
+        }
+    }
+
+    // Add styles for smooth transition
+    content.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+    content.style.overflow = 'hidden';
+    
+    // Initialize in closed state
+    content.style.maxHeight = '0';
+    content.style.opacity = '0';
+    icon.style.transform = 'rotate(-90deg)';
+
+    button.addEventListener('click', toggleAccordion);
+}
+
 function updateOutline() {
     const content = editor.getValue();
     const lines = content.split("\n");
@@ -31,7 +130,6 @@ function updateOutline() {
     outline.innerHTML = "";
 
     for (let i = 0; i < lines.length; i++) {
-        // Check for the three-line pattern
         if (i + 2 < lines.length &&
             lines[i].trim() === "# -------------------------------------------------------------------------" &&
             lines[i + 1].trim().startsWith("# ") &&
@@ -43,7 +141,7 @@ function updateOutline() {
             
             const nameSpan = document.createElement("span");
             nameSpan.textContent = sectionName;
-            const fileTypeClass = getFileTypeClass(sectionName);
+            const fileTypeClass = `file-type-${sectionName.split('.').pop()}`;
             nameSpan.className = `cursor-pointer flex-grow ${fileTypeClass}`;
             nameSpan.onclick = () => {
                 editor.scrollIntoView({line: i, ch: 0});
@@ -66,13 +164,11 @@ function updateOutline() {
     }
 }
 
-// Update the delete section function to handle the three-line header
 function deleteSection(startIndex) {
     const content = editor.getValue();
     const lines = content.split("\n");
     let endIndex = lines.length;
 
-    // Look for the start of the next section
     for (let i = startIndex + 3; i < lines.length; i++) {
         if (lines[i].trim() === "# -------------------------------------------------------------------------" &&
             i + 2 < lines.length &&
@@ -83,23 +179,17 @@ function deleteSection(startIndex) {
         }
     }
 
-    // Remove the section
     lines.splice(startIndex, endIndex - startIndex);
     editor.setValue(lines.join("\n"));
     updateOutline();
 }
 
-// Add change listener to update outline
-editor.on("change", updateOutline);
-
-// Function to check if file type is enabled in filters
 function isFileTypeEnabled(filename) {
     const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
     const filterElement = document.getElementById(`filter-${ext.substring(1)}`);
     return filterElement ? filterElement.checked : false;
 }
 
-// Handle file select function
 async function handleFileSelect(event) {
     showLoading();
     const files = Array.from(event.target.files || event.dataTransfer.files);
@@ -112,7 +202,7 @@ async function handleFileSelect(event) {
         .sort((a, b) => a.name.localeCompare(b.name));
 
     if (validFiles.length === 0) {
-        alert('Please select valid Godot files (.gd, .tscn, .tres, .res, .py, .yaml, .js, .ts, .json)');
+        alert('Please select supported file types');
         resetDropZone();
         return;
     }
@@ -129,25 +219,35 @@ async function handleFileSelect(event) {
     }
 }
 
-// Update the appendFileContent function to ensure consistent header format
 function appendFileContent(file) {
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = function(e) {
             const fileName = file.name;
+            const fileContent = e.target.result;
+            
+            let processedContent = fileContent;
+            if (fileName.endsWith('.go') || fileName.endsWith('.py')) {
+                processedContent = fileContent.replace(/\r\n/g, '\n');
+            }
+
             const header = `\n# -------------------------------------------------------------------------
 # ${fileName}
 # -------------------------------------------------------------------------\n`;
+            
             const currentContent = editor.getValue();
-            const newContent = currentContent + header + e.target.result;
+            const newContent = currentContent + header + processedContent;
+            
             editor.setValue(newContent);
+            editor.setOption('mode', getFileMode(fileName));
+            
             resolve();
         };
         reader.readAsText(file);
     });
 }
 
-// Initialize drag and drop
+// Drag and drop handlers
 const dropZone = document.getElementById('dropZone');
 
 dropZone.addEventListener('dragover', (e) => {
@@ -166,26 +266,23 @@ dropZone.addEventListener('drop', (e) => {
     handleFileSelect(e);
 });
 
-// Load file function
 function loadFile() {
     const fileInput = document.getElementById("fileInput");
     fileInput.value = '';
     fileInput.click();
 }
 
-// Download file function
 function downloadFile() {
     const content = editor.getValue();
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "godot_combined_files.txt";
+    a.download = "combined_files.txt";
     a.click();
     URL.revokeObjectURL(url);
 }
 
-// Loading indicator functions
 function showLoading() {
     dropZone.innerHTML = `
         <div class="flex items-center justify-center">
@@ -200,8 +297,8 @@ function showLoading() {
 
 function resetDropZone() {
     dropZone.innerHTML = `
-        <p class="text-sm text-gray-400">Drag & Drop Godot files here</p>
-        <p class="text-xs text-gray-500 mt-1">Supported: .gd, .tscn, .tres, .res, .py, .yaml, .js, .ts, .json</p>
+        <p class="text-sm text-gray-400">Drag & Drop files here</p>
+        <p class="text-xs text-gray-500 mt-1">Multiple file types supported</p>
         <button onclick="loadFile()" 
                 class="mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-3 rounded-md transition-colors">
             Browse Files
@@ -209,5 +306,10 @@ function resetDropZone() {
     `;
 }
 
-// Initialize with empty editor
+// Initialize
 editor.setValue('');
+editor.on("change", updateOutline);
+document.addEventListener('DOMContentLoaded', () => {
+    generateFileTypeFilters();
+    setupAccordion();
+});
