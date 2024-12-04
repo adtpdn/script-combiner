@@ -1,47 +1,47 @@
-# Script Combiner
+# Script Combiners
 
 A web-based tool for combining and managing multiple script files in a single interface. Perfect for code review, documentation, and script organization.
 
-## 🌟 Features
+## ð Features
 
 ### File Management
-- 📁 Support for multiple file types:
+- ð Support for multiple file types:
   - `.gd` (GDScript files)
   - `.tscn` (Scene files)
   - `.tres` (Resource files)
   - `.res` (Resource files)
-- 📥 Drag & Drop file upload
-- 📎 Multiple file selection
-- ⬇️ Download combined files
+- ð¥ Drag & Drop file upload
+- ð Multiple file selection
+- â¬ï¸ Download combined files
 
 ### Navigation & Interface
-- 🗂️ Interactive file outline
-- 🎨 Color-coded file types:
+- ðï¸ Interactive file outline
+- ð¨ Color-coded file types:
   - GDScript (`.gd`) - Gold
   - Scene (`.tscn`) - Light Green
   - Resource (`.tres`) - Light Blue
   - Resource (`.res`) - Light Purple
-- 🔍 Quick section navigation
-- 🗑️ Section deletion
+- ð Quick section navigation
+- ðï¸ Section deletion
 
 ### Editor Features
-- 🎨 Syntax highlighting
-- 📏 Line numbers
-- ⌨️ Auto-indentation
-- ↔️ Line wrapping
-- 🎯 Active line highlighting
+- ð¨ Syntax highlighting
+- ð Line numbers
+- â¨ï¸ Auto-indentation
+- âï¸ Line wrapping
+- ð¯ Active line highlighting
 
-## 🚀 Quick Start
+## ð Quick Start
 
 1. Open in browser
 2. Drag & drop files or click "Browse"
 3. Navigate sections using sidebar
 4. Toggle file types with filters
 5. Click sections to jump to location
-6. Remove sections with delete button (×)
+6. Remove sections with delete button (Ã)
 7. Download combined output
 
-## 🛠️ Technical Details
+## ð ï¸ Technical Details
 
 ### Built With
 - HTML5
@@ -49,13 +49,13 @@ A web-based tool for combining and managing multiple script files in a single in
 - JavaScript
 - CodeMirror 5.65.2
 
-## 📜 License
+## ð License
 MIT License
 
-## 🙏 Acknowledgments
+## ð Acknowledgments
 - [CodeMirror](https://codemirror.net/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
 ---
 
-Made with ❤️ for developers
+Made with â¤ï¸ for developers
