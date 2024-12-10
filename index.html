@@ -30,7 +30,7 @@
         .file-type-css { color: #563d7c; }
         .file-type-json { color: #292929; }
 
-        .CodeMirror { height: 80%;}
+        .CodeMirror { height: 100%;}
 
         /* Accordion styles */
         #filterAccordionContent {
@@ -77,6 +77,32 @@
 
         .form-checkbox:hover {
             border-color: #6B7280;
+        }
+        /* Floating button styles */
+        #scrollTopBtn,
+        #scrollBottomBtn {
+            transition: opacity 0.3s, transform 0.3s;
+            transform: scale(0.95);
+        }
+        
+        #scrollTopBtn:hover,
+        #scrollBottomBtn:hover {
+            transform: scale(1);
+        }
+
+        /* Mobile/tablet optimizations for floating buttons */
+        @media (max-width: 768px) {
+            #scrollTopBtn,
+            #scrollBottomBtn {
+                width: 50px;
+                height: 50px;
+                padding: 12px;
+            }
+        }
+
+        /* Active state for buttons */
+        .scroll-btn-visible {
+            opacity: 1 !important;
         }
     </style>
 </head>
@@ -141,6 +167,25 @@
             </div>
             <textarea id="editor"></textarea>
         </div>
+    </div>
+
+    <!-- Floating Navigation Buttons -->
+    <div class="fixed bottom-4 right-4 flex flex-col gap-2 z-50">
+        <button id="scrollTopBtn" 
+                class="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 focus:outline-none"
+                aria-label="Scroll to top">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+            </svg>
+        </button>
+        
+        <button id="scrollBottomBtn"
+                class="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 focus:outline-none"
+                aria-label="Scroll to bottom">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </button>
     </div>
 
     <script src="./script.js"></script>

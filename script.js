@@ -29,6 +29,9 @@ const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     matchBrackets: true,
     indentWithTabs: false,
     smartIndent: true,
+    // Add these options
+    viewportMargin: Infinity,
+    scrollPastEnd: true,
     extraKeys: {
         "Tab": function(cm) {
             if (cm.somethingSelected()) {
@@ -378,6 +381,44 @@ function showCopyFeedback() {
     }, 2000);
 }
 
+// Scroll button functionality
+function setupScrollButtons() {
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    const scrollBottomBtn = document.getElementById('scrollBottomBtn');
+    
+    // Scroll to top
+    scrollTopBtn.addEventListener('click', () => {
+        editor.scrollTo(null, 0);
+        editor.setCursor(0, 0);
+        editor.focus();
+    });
+    
+    // Scroll to bottom
+    scrollBottomBtn.addEventListener('click', () => {
+        const lastLine = editor.lastLine();
+        editor.scrollTo(null, editor.heightAtLine(lastLine));
+        editor.setCursor(lastLine, 0);
+        editor.focus();
+    });
+    
+    // Show/hide buttons based on scroll position
+    editor.on('scroll', () => {
+        const info = editor.getScrollInfo();
+        const topBtnVisible = info.top > 100;
+        const bottomBtnVisible = info.top < (info.height - info.clientHeight - 100);
+        
+        scrollTopBtn.classList.toggle('scroll-btn-visible', topBtnVisible);
+        scrollBottomBtn.classList.toggle('scroll-btn-visible', bottomBtnVisible);
+    });
+    
+    // Initial visibility check
+    setTimeout(() => {
+        const info = editor.getScrollInfo();
+        if (info.height > info.clientHeight) {
+            scrollBottomBtn.classList.add('scroll-btn-visible');
+        }
+    }, 100);
+}
 
 // Initialize
 editor.setValue('');
@@ -385,4 +426,5 @@ editor.on("change", updateOutline);
 document.addEventListener('DOMContentLoaded', () => {
     generateFileTypeFilters();
     setupAccordion();
+    setupScrollButtons();
 });

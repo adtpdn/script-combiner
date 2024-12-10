@@ -47,6 +47,40 @@
     .CodeMirror {
         height: 60vh !important;
     }
+    
+    #scrollTopBtn,
+    #scrollBottomBtn {
+        /* Larger touch targets for mobile/tablet */
+        width: 56px;
+        height: 56px;
+        
+        /* Move buttons slightly inward from the edge */
+        right: 16px;
+        
+        /* Add subtle background blur for better visibility */
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        
+        /* Add subtle border for better visibility */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Adjust bottom button position */
+    #scrollBottomBtn {
+        bottom: 16px;
+    }
+    
+    /* Adjust top button position */
+    #scrollTopBtn {
+        bottom: 88px; /* 16px + 56px + 16px */
+    }
+    
+    /* Add touch ripple effect */
+    #scrollTopBtn:active,
+    #scrollBottomBtn:active {
+        transform: scale(0.9);
+        background-color: rgba(55, 65, 81, 0.9);
+    }
 }
 
 /* Improve touch targets for mobile/tablet */
