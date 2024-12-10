@@ -18,7 +18,7 @@ const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     mode: "text",
     theme: "one-dark",
     touchscreen: true,
-    scrollbarStyle: "overlay",
+    scrollbarStyle: "simple",
     styleActiveLine: true,
     showCursorWhenSelecting: true,
     lineNumbers: true,
@@ -29,6 +29,7 @@ const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     matchBrackets: true,
     indentWithTabs: false,
     smartIndent: true,
+    height: "100%",
     // Add these options
     viewportMargin: Infinity,
     scrollPastEnd: true,

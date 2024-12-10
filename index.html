@@ -35,8 +35,6 @@
         .file-type-css { color: #563d7c; }
         .file-type-json { color: #292929; }
 
-        .CodeMirror { height: auto;}
-
         /* Accordion styles */
         #filterAccordionContent {
             transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -159,8 +157,8 @@
         </div>
 
         <!-- Editor Container -->
-        <div class="flex-grow">
-            <div class="bg-gray-800 p-2 mb-2 rounded-lg flex gap-2">
+        <div class="flex-grow flex flex-col h-[calc(100vh-2rem)]"> <!-- Added flex-col and height -->
+            <div class="bg-gray-800 p-2 mb-2 rounded-lg flex gap-2 flex-shrink-0"> <!-- Added flex-shrink-0 -->
                 <button onclick="window.selectAllCode()" 
                         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
                     Select All
@@ -170,28 +168,29 @@
                     Copy
                 </button>
             </div>
-            <textarea id="editor"></textarea>
+            <div class="flex-grow relative"> <!-- Added relative container -->
+                <textarea id="editor" class="absolute inset-0"></textarea>
+            </div>
         </div>
-    </div>
 
-    <!-- Floating Navigation Buttons -->
-    <div class="fixed bottom-4 right-4 flex flex-col gap-2 z-50">
-        <button id="scrollTopBtn" 
-                class="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 focus:outline-none"
-                aria-label="Scroll to top">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-            </svg>
-        </button>
-        
-        <button id="scrollBottomBtn"
-                class="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 focus:outline-none"
-                aria-label="Scroll to bottom">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-            </svg>
-        </button>
-    </div>
+        <!-- Floating Navigation Buttons -->
+        <div class="fixed bottom-4 right-4 flex flex-col gap-2 z-50">
+            <button id="scrollTopBtn" 
+                    class="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 focus:outline-none"
+                    aria-label="Scroll to top">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                </svg>
+            </button>
+
+            <button id="scrollBottomBtn"
+                    class="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 focus:outline-none"
+                    aria-label="Scroll to bottom">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+            </button>
+        </div>
 
     <script src="./script.js"></script>
 </body>

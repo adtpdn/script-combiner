@@ -1,5 +1,10 @@
 .CodeMirror {
-    height: 90vh;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100% !important; 
     border-radius: 0.375rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
@@ -31,6 +36,13 @@
 
 /* Add to your existing styles section in index.html */
 @media (max-width: 768px) {
+
+    /* Adjust editor container height for mobile */
+    .h-[calc(100vh-2rem)] {
+        height: calc(100vh - 16rem) !important;
+    }
+
+
     .flex {
         flex-direction: column;
     }
