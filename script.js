@@ -17,6 +17,10 @@ const VALID_EXTENSIONS = [
 const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     mode: "text",
     theme: "one-dark",
+    touchscreen: true,
+    scrollbarStyle: "overlay",
+    styleActiveLine: true,
+    showCursorWhenSelecting: true,
     lineNumbers: true,
     indentUnit: 4,
     tabSize: 4,
@@ -305,6 +309,75 @@ function resetDropZone() {
         </button>
     `;
 }
+
+function selectAllCode() {
+    editor.focus();
+    editor.execCommand('selectAll');
+}
+
+function copyCode() {
+    editor.focus();
+    const content = editor.getValue();
+    
+    // Try using the modern navigator.clipboard API first
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(content)
+            .then(() => {
+                showCopyFeedback();
+            })
+            .catch(() => {
+                fallbackCopy(content);
+            });
+    } else {
+        fallbackCopy(content);
+    }
+}
+
+function fallbackCopy(text) {
+    // Fallback for older browsers or non-HTTPS
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    
+    // Handle iOS Safari
+    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+        const range = document.createRange();
+        range.selectNodeContents(textarea);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textarea.setSelectionRange(0, 999999);
+    } else {
+        textarea.select();
+    }
+    
+    try {
+        document.execCommand('copy');
+        showCopyFeedback();
+    } catch (err) {
+        console.error('Failed to copy text:', err);
+        alert('Failed to copy text to clipboard');
+    }
+    
+    document.body.removeChild(textarea);
+}
+
+function showCopyFeedback() {
+    const originalText = document.querySelector('button:nth-child(2)').textContent;
+    const button = document.querySelector('button:nth-child(2)');
+    button.textContent = 'Copied!';
+    button.classList.remove('bg-green-600', 'hover:bg-green-700');
+    button.classList.add('bg-gray-600');
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('bg-gray-600');
+        button.classList.add('bg-green-600', 'hover:bg-green-700');
+    }, 2000);
+}
+
 
 // Initialize
 editor.setValue('');

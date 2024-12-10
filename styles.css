@@ -28,3 +28,35 @@
 .CodeMirror-activeline-background {
     background: rgba(255, 255, 255, 0.05) !important;
 }
+
+/* Add to your existing styles section in index.html */
+@media (max-width: 768px) {
+    .flex {
+        flex-direction: column;
+    }
+    
+    .w-72 {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .mr-4 {
+        margin-right: 0;
+    }
+    
+    .CodeMirror {
+        height: 60vh !important;
+    }
+}
+
+/* Improve touch targets for mobile/tablet */
+button, 
+.cursor-pointer {
+    min-height: 44px;
+    padding: 8px 16px;
+}
+
+/* Make the editor more touch-friendly */
+.CodeMirror {
+    font-size: 16px;
+}

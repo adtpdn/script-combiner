@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Script Combiner</title>
     <!-- CodeMirror Core -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror-one-dark-theme@1.1.1/one-dark.min.css">
-    
+    <link rel="stylesheet" href="./style.css">
     <!-- CodeMirror Modes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
@@ -30,7 +30,7 @@
         .file-type-css { color: #563d7c; }
         .file-type-json { color: #292929; }
 
-        .CodeMirror { height: 100%;}
+        .CodeMirror { height: 80%;}
 
         /* Accordion styles */
         #filterAccordionContent {
@@ -129,6 +129,16 @@
 
         <!-- Editor Container -->
         <div class="flex-grow">
+            <div class="bg-gray-800 p-2 mb-2 rounded-lg flex gap-2">
+                <button onclick="selectAllCode()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
+                    Select All
+                </button>
+                <button onclick="copyCode()" 
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
+                    Copy
+                </button>
+            </div>
             <textarea id="editor"></textarea>
         </div>
     </div>
