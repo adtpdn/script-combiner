@@ -8,6 +8,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror-one-dark-theme@1.1.1/one-dark.min.css">
+    <!-- Add these in the head section -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/scroll/simplescrollbars.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/scroll/simplescrollbars.js"></script>
     <link rel="stylesheet" href="./style.css">
     <!-- CodeMirror Modes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
@@ -19,6 +22,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
     
+    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .file-type-go { color: #00ADD8; }
@@ -30,7 +35,7 @@
         .file-type-css { color: #563d7c; }
         .file-type-json { color: #292929; }
 
-        .CodeMirror { height: 100%;}
+        .CodeMirror { height: auto;}
 
         /* Accordion styles */
         #filterAccordionContent {
@@ -156,11 +161,11 @@
         <!-- Editor Container -->
         <div class="flex-grow">
             <div class="bg-gray-800 p-2 mb-2 rounded-lg flex gap-2">
-                <button onclick="selectAllCode()" 
+                <button onclick="window.selectAllCode()" 
                         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
                     Select All
                 </button>
-                <button onclick="copyCode()" 
+                <button onclick="window.copyCode()" 
                         class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
                     Copy
                 </button>

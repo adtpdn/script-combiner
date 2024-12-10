@@ -383,17 +383,19 @@ function showCopyFeedback() {
 
 // Scroll button functionality
 function setupScrollButtons() {
+    if (!editor) return;
+    
     const scrollTopBtn = document.getElementById('scrollTopBtn');
     const scrollBottomBtn = document.getElementById('scrollBottomBtn');
     
-    // Scroll to top
+    if (!scrollTopBtn || !scrollBottomBtn) return;
+    
     scrollTopBtn.addEventListener('click', () => {
         editor.scrollTo(null, 0);
         editor.setCursor(0, 0);
         editor.focus();
     });
     
-    // Scroll to bottom
     scrollBottomBtn.addEventListener('click', () => {
         const lastLine = editor.lastLine();
         editor.scrollTo(null, editor.heightAtLine(lastLine));
@@ -401,7 +403,6 @@ function setupScrollButtons() {
         editor.focus();
     });
     
-    // Show/hide buttons based on scroll position
     editor.on('scroll', () => {
         const info = editor.getScrollInfo();
         const topBtnVisible = info.top > 100;
