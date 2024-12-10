@@ -35,6 +35,7 @@
         .file-type-css { color: #563d7c; }
         .file-type-json { color: #292929; }
 
+        
         /* Accordion styles */
         #filterAccordionContent {
             transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -132,6 +133,40 @@
                 </div>
             </div>
 
+            <!-- Hidden Files & Ignore Settings Accordion -->
+<div class="mb-4">
+    <button id="settingsAccordionBtn" 
+            class="w-full flex justify-between items-center p-2 bg-gray-700 rounded-t-md hover:bg-gray-600 transition-colors">
+        <span class="font-semibold">Project Settings</span>
+        <svg id="settingsAccordionIcon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+    <div id="settingsAccordionContent" 
+         class="bg-gray-700/50 rounded-b-md p-3 border-t border-gray-600">
+        <!-- Show Hidden Files Toggle -->
+        <div class="mb-3">
+            <label class="flex items-center space-x-2 hover:bg-gray-600/50 p-1 rounded cursor-pointer">
+                <input type="checkbox" id="showHiddenFiles" class="form-checkbox text-blue-500">
+                <span>Show Hidden Files</span>
+            </label>
+        </div>
+        
+        <!-- Ignore Patterns -->
+        <div>
+            <label class="block text-sm font-medium mb-1">Ignore Patterns (one per line)</label>
+            <textarea id="ignorePatterns" 
+                      class="w-full h-24 bg-gray-800 text-gray-200 text-sm p-2 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder=".git
+node_modules
+*.log
+*.tmp
+.DS_Store
+.godot/"></textarea>
+        </div>
+    </div>
+</div>
+
             <!-- Drop Zone -->
             <div id="dropZone" 
                  class="border-2 border-dashed border-gray-600 rounded-lg p-4 mb-4 text-center hover:border-blue-500 transition-colors">
@@ -147,13 +182,17 @@
             <div id="outline" class="flex-grow overflow-y-auto"></div>
             
             <!-- Button Container -->
-            <div class="flex gap-2 mt-4">
+            <div class="flex flex-col gap-2 mt-4">
+                <button onclick="loadFolder()" 
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
+                    Load Project Folder
+                </button>
                 <button onclick="downloadFile()" 
                         class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition-colors">
                     Download
                 </button>
             </div>
-            <input type="file" id="fileInput" class="hidden" multiple accept="*.*" onchange="handleFileSelect(event)">
+            <input type="file" id="folderInput" class="hidden" webkitdirectory directory multiple>
         </div>
 
         <!-- Editor Container -->

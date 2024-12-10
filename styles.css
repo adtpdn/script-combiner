@@ -34,6 +34,49 @@
     background: rgba(255, 255, 255, 0.05) !important;
 }
 
+/* Improve touch targets for mobile/tablet */
+button, 
+.cursor-pointer {
+    min-height: 44px;
+    padding: 8px 16px;
+}
+
+/* Make the editor more touch-friendly */
+.CodeMirror {
+    font-size: 16px;
+}
+
+/* Add to your styles.css */
+.CodeMirror pre[style*="color: #"] {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Directory tree styling */
+.CodeMirror-line span[style*="color: #"][role="presentation"] {
+    opacity: 0.8;
+}
+
+.CodeMirror-line span[style*="color: #"][role="presentation"]:hover {
+    opacity: 1;
+}
+
+/* Add to your existing styles */
+#ignorePatterns {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+}
+
+#ignorePatterns::placeholder {
+    color: #4B5563;
+}
+
+/* Style for the settings accordion */
+#settingsAccordionContent {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
 /* Add to your existing styles section in index.html */
 @media (max-width: 768px) {
 
@@ -95,14 +138,3 @@
     }
 }
 
-/* Improve touch targets for mobile/tablet */
-button, 
-.cursor-pointer {
-    min-height: 44px;
-    padding: 8px 16px;
-}
-
-/* Make the editor more touch-friendly */
-.CodeMirror {
-    font-size: 16px;
-}

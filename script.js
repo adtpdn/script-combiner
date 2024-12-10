@@ -1,17 +1,45 @@
 // script.js
 const VALID_EXTENSIONS = [
-    '.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.scss', '.sass', '.less', 
-    '.vue', '.svelte', '.astro', '.webp', '.wasm', '.json', '.yaml', '.yml', 
-    '.toml', '.xml', '.env', '.ini', '.conf', '.config', '.lock', '.md', '.csv', 
-    '.sql', '.sqlite', '.gd', '.gdscript', '.tscn', '.tres', '.res', '.import', 
-    '.cfg', '.godot', '.cs', '.unity', '.prefab', '.mat', '.asset', '.meta', 
-    '.anim', '.controller', '.physicMaterial', '.mixer', '.shadergraph', '.shader', 
-    '.uasset', '.umap', '.cpp', '.h', '.uplugin', '.uproject', '.blueprint', 
-    '.umeta', '.ini', '.ue4', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.mp3', 
-    '.wav', '.ogg', '.ttf', '.otf', '.glb', '.gltf', '.obj', '.fbx',
-    '.py', '.pyw', '.pyc', '.pyo', '.pyx',
+    '.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.scss', '.sass', '.less',
+    '.vue', '.svelte', '.astro',
+    '.json', '.yaml', '.yml', '.toml', '.xml', '.env', '.ini', '.conf', 
+    '.config', '.lock',
+    '.md', '.csv',
+    '.sql',
+    '.gd', '.gdscript', '.tscn', '.tres',
+    '.cs',
+    '.cpp', '.h',
+    '.py', '.pyw',
     '.go', '.mod', '.sum'
 ];
+
+// Add a list of binary/media extensions to explicitly exclude
+const EXCLUDED_EXTENSIONS = [
+    '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp',
+    '.mp3', '.wav', '.ogg',
+    '.ttf', '.otf',
+    '.glb', '.gltf', '.obj', '.fbx',
+    '.unity', '.prefab', '.mat', '.asset', '.meta', '.anim',
+    '.controller', '.physicMaterial', '.mixer', '.shadergraph', '.shader',
+    '.uasset', '.umap', '.uplugin', '.uproject', '.blueprint', '.umeta',
+    '.wasm', '.sqlite', '.import', '.res'
+];
+
+// Add these constants at the top of your file
+const DEFAULT_IGNORE_PATTERNS = [
+    '.git',
+    'node_modules',
+    '*.log',
+    '*.tmp',
+    '.DS_Store',
+    '*.cfg',
+    '*.import',
+    '.godot/'
+];
+
+// Add these variables for state management
+let showHiddenFiles = false;
+let ignorePatterns = [...DEFAULT_IGNORE_PATTERNS];
 
 // Initialize CodeMirror
 const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
@@ -84,6 +112,14 @@ function getFileMode(filename) {
     return modeMap[ext] || 'text';
 }
 
+// Update the file filtering function
+function isValidFile(file) {
+    const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    return VALID_EXTENSIONS.includes(ext) && 
+           !EXCLUDED_EXTENSIONS.includes(ext) && 
+           isFileTypeEnabled(file.name);
+}
+
 function generateFileTypeFilters() {
     const filterContainer = document.querySelector('#filterAccordionContent .flex');
     filterContainer.innerHTML = '';
@@ -129,6 +165,86 @@ function setupAccordion() {
     icon.style.transform = 'rotate(-90deg)';
 
     button.addEventListener('click', toggleAccordion);
+}
+
+// Add this function to setup the settings accordion
+function setupSettingsAccordion() {
+    const button = document.getElementById('settingsAccordionBtn');
+    const content = document.getElementById('settingsAccordionContent');
+    const icon = document.getElementById('settingsAccordionIcon');
+    let isOpen = false;
+
+    function toggleAccordion() {
+        isOpen = !isOpen;
+        if (isOpen) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            content.style.opacity = '1';
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            content.style.maxHeight = '0';
+            content.style.opacity = '0';
+            icon.style.transform = 'rotate(-90deg)';
+        }
+    }
+
+    content.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+    content.style.overflow = 'hidden';
+    content.style.maxHeight = '0';
+    content.style.opacity = '0';
+    icon.style.transform = 'rotate(-90deg)';
+
+    button.addEventListener('click', toggleAccordion);
+}
+
+// Add this function to setup the settings controls
+function setupSettingsControls() {
+    const showHiddenFilesCheckbox = document.getElementById('showHiddenFiles');
+    const ignorePatternsTextarea = document.getElementById('ignorePatterns');
+
+    // Initialize with default values
+    showHiddenFilesCheckbox.checked = showHiddenFiles;
+    ignorePatternsTextarea.value = ignorePatterns.join('\n');
+
+    // Add event listeners
+    showHiddenFilesCheckbox.addEventListener('change', (e) => {
+        showHiddenFiles = e.target.checked;
+        // Refresh the current view if needed
+        if (document.getElementById('folderInput').files.length > 0) {
+            handleFolderSelect({ target: document.getElementById('folderInput') });
+        }
+    });
+
+    ignorePatternsTextarea.addEventListener('change', (e) => {
+        ignorePatterns = e.target.value
+            .split('\n')
+            .map(pattern => pattern.trim())
+            .filter(pattern => pattern.length > 0);
+        // Refresh the current view if needed
+        if (document.getElementById('folderInput').files.length > 0) {
+            handleFolderSelect({ target: document.getElementById('folderInput') });
+        }
+    });
+}
+
+// Add this function to check if a file should be ignored
+function shouldIgnoreFile(filePath) {
+    // Convert ignore patterns to regex patterns
+    const patterns = ignorePatterns.map(pattern => {
+        // Escape special regex characters except * and /
+        pattern = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+        // Convert glob * to regex .*
+        pattern = pattern.replace(/\*/g, '.*');
+        // Add start and end anchors
+        return new RegExp(`^${pattern}$|^${pattern}/|/${pattern}$|/${pattern}/`);
+    });
+
+    // Check if the file matches any ignore pattern
+    return patterns.some(pattern => pattern.test(filePath));
+}
+
+// Add this function to check if a file is hidden
+function isHiddenFile(fileName) {
+    return fileName.startsWith('.') && fileName !== '.' && fileName !== '..';
 }
 
 function updateOutline() {
@@ -198,19 +314,37 @@ function isFileTypeEnabled(filename) {
     return filterElement ? filterElement.checked : false;
 }
 
+// Update the isValidFile function
+function isValidFile(file) {
+    const fileName = file.name;
+    const filePath = file.webkitRelativePath || fileName;
+    const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+    // Check if file should be ignored
+    if (shouldIgnoreFile(filePath)) {
+        return false;
+    }
+
+    // Check if file is hidden
+    if (!showHiddenFiles && isHiddenFile(fileName)) {
+        return false;
+    }
+
+    // Check if it's a valid text file
+    return VALID_EXTENSIONS.includes(ext) && !EXCLUDED_EXTENSIONS.includes(ext);
+}
+
+// Update handleFileSelect and handleFolderSelect to use isValidFile
 async function handleFileSelect(event) {
     showLoading();
     const files = Array.from(event.target.files || event.dataTransfer.files);
     
     const validFiles = files
-        .filter(file => {
-            const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-            return VALID_EXTENSIONS.includes(ext) && isFileTypeEnabled(file.name);
-        })
+        .filter(file => isValidFile(file))
         .sort((a, b) => a.name.localeCompare(b.name));
 
     if (validFiles.length === 0) {
-        alert('Please select supported file types');
+        alert('Please select supported text-based file types');
         resetDropZone();
         return;
     }
@@ -278,6 +412,12 @@ function loadFile() {
     const fileInput = document.getElementById("fileInput");
     fileInput.value = '';
     fileInput.click();
+}
+
+function loadFolder() {
+    const folderInput = document.getElementById("folderInput");
+    folderInput.value = '';
+    folderInput.click();
 }
 
 function downloadFile() {
@@ -422,11 +562,163 @@ function setupScrollButtons() {
     }, 100);
 }
 
+// Add these functions to your script.js
+
+function loadFolder() {
+    const folderInput = document.getElementById("folderInput");
+    folderInput.value = '';
+    folderInput.click();
+}
+
+// Add folder input change handler
+document.getElementById("folderInput").addEventListener("change", handleFolderSelect);
+
+async function handleFolderSelect(event) {
+    showLoading();
+    const files = Array.from(event.target.files);
+    
+    // Create directory structure (include all files for structure display)
+    const directoryStructure = createDirectoryStructure(files);
+    
+    // Add directory structure to editor
+    const structureText = `# -------------------------------------------------------------------------
+# Project Structure
+# -------------------------------------------------------------------------
+${generateDirectoryTree(directoryStructure)}
+
+`;
+    
+    editor.setValue(structureText);
+
+    // Filter and sort files (only process valid text files)
+    const validFiles = files
+        .filter(file => isValidFile(file))
+        .sort((a, b) => a.webkitRelativePath.localeCompare(b.webkitRelativePath));
+
+    if (validFiles.length === 0) {
+        alert('No supported text files found in the folder');
+        resetDropZone();
+        return;
+    }
+
+    try {
+        for (const file of validFiles) {
+            await appendFileContentWithPath(file);
+        }
+    } catch (error) {
+        console.error('Error loading files:', error);
+        alert('Error loading files');
+    } finally {
+        resetDropZone();
+    }
+}
+
+// Update createDirectoryStructure to handle ignore patterns and hidden files
+function createDirectoryStructure(files) {
+    const structure = {};
+    
+    files.forEach(file => {
+        const filePath = file.webkitRelativePath;
+        
+        // Skip ignored files and hidden files (unless enabled)
+        if (shouldIgnoreFile(filePath) || (!showHiddenFiles && isHiddenFile(file.name))) {
+            return;
+        }
+
+        const parts = filePath.split('/');
+        let current = structure;
+        
+        parts.forEach((part, index) => {
+            // Skip hidden directories unless enabled
+            if (!showHiddenFiles && isHiddenFile(part) && index !== parts.length - 1) {
+                return;
+            }
+
+            if (index === parts.length - 1) {
+                if (!current.files) current.files = [];
+                const ext = part.substring(part.lastIndexOf('.')).toLowerCase();
+                const isTextFile = VALID_EXTENSIONS.includes(ext);
+                current.files.push({
+                    name: part,
+                    isTextFile: isTextFile
+                });
+            } else {
+                if (!current.dirs) current.dirs = {};
+                if (!current.dirs[part]) current.dirs[part] = {};
+                current = current.dirs[part];
+            }
+        });
+    });
+    
+    return structure;
+}
+
+// Update generateDirectoryTree to show different styling for non-text files
+function generateDirectoryTree(structure, prefix = '', isLast = true) {
+    let result = '';
+    
+    // Handle directories
+    if (structure.dirs) {
+        const dirs = Object.entries(structure.dirs);
+        dirs.forEach(([name, content], index) => {
+            const isLastDir = index === dirs.length - 1 && (!structure.files || structure.files.length === 0);
+            const marker = isLastDir ? '└── ' : '├── ';
+            const newPrefix = prefix + (isLast ? '    ' : '│   ');
+            
+            result += prefix + marker + name + '/\n';
+            result += generateDirectoryTree(content, newPrefix, isLastDir);
+        });
+    }
+    
+    // Handle files
+    if (structure.files) {
+        structure.files.forEach((file, index) => {
+            const isLastFile = index === structure.files.length - 1;
+            const marker = isLastFile ? '└── ' : '├── ';
+            // Add a marker (*) for non-text files
+            const fileName = file.isTextFile ? file.name : file.name + ' (binary)';
+            result += prefix + marker + fileName + '\n';
+        });
+    }
+    
+    return result;
+}
+
+async function appendFileContentWithPath(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const filePath = file.webkitRelativePath;
+            const fileContent = e.target.result;
+            
+            let processedContent = fileContent;
+            if (filePath.endsWith('.go') || filePath.endsWith('.py')) {
+                processedContent = fileContent.replace(/\r\n/g, '\n');
+            }
+
+            const header = `\n# -------------------------------------------------------------------------
+# ${filePath}
+# -------------------------------------------------------------------------\n`;
+            
+            const currentContent = editor.getValue();
+            const newContent = currentContent + header + processedContent;
+            
+            editor.setValue(newContent);
+            editor.setOption('mode', getFileMode(filePath));
+            
+            resolve();
+        };
+        reader.readAsText(file);
+    });
+}
+
 // Initialize
 editor.setValue('');
 editor.on("change", updateOutline);
 document.addEventListener('DOMContentLoaded', () => {
     generateFileTypeFilters();
     setupAccordion();
+    setupSettingsAccordion();
+    setupSettingsControls();
     setupScrollButtons();
 });
