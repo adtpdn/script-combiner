@@ -28,13 +28,27 @@ const EXCLUDED_EXTENSIONS = [
 // Add these constants at the top of your file
 const DEFAULT_IGNORE_PATTERNS = [
     '.git',
+    '.godot',
+    '.vscode',
     'node_modules',
     '*.log',
     '*.tmp',
     '.DS_Store',
     '*.cfg',
     '*.import',
-    '.godot/'
+    '.godot/',
+    '*.tres',
+    '*.res',
+    '*.tscn',
+    '*.png',
+    '*.svg',
+    '*.gltf',
+    '*.glb',
+    '*.uid',
+    '*.godot',
+    'editor',
+    'export',
+    'exported'
 ];
 
 // Add these variables for state management
