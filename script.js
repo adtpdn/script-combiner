@@ -11,6 +11,8 @@ const VALID_EXTENSIONS = [
     '.cpp', '.h',
     '.py', '.pyw',
     '.go', '.mod', '.sum'
+    '.wxml', // Add .wxml (treated as HTML)
+    '.wxss'  // Add .wxss (treated as CSS)
 ];
 
 // Add a list of binary/media extensions to explicitly exclude
@@ -122,6 +124,8 @@ function getFileMode(filename) {
         '.go': 'go',
         '.mod': 'go',
         '.sum': 'go'
+        '.wxml': 'html', // Map .wxml to HTML mode
+        '.wxss': 'css'   // Map .wxss to CSS mode
     };
     return modeMap[ext] || 'text';
 }
@@ -736,3 +740,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSettingsControls();
     setupScrollButtons();
 });
+
