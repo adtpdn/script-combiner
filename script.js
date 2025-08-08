@@ -10,7 +10,7 @@ const VALID_EXTENSIONS = [
     '.cs',
     '.cpp', '.h',
     '.py', '.pyw',
-    '.go', '.mod', '.sum'
+    '.go', '.mod', '.sum',
     '.wxml', // Add .wxml (treated as HTML)
     '.wxss'  // Add .wxss (treated as CSS)
 ];
@@ -123,7 +123,7 @@ function getFileMode(filename) {
         '.toml': 'toml',
         '.go': 'go',
         '.mod': 'go',
-        '.sum': 'go'
+        '.sum': 'go',
         '.wxml': 'html', // Map .wxml to HTML mode
         '.wxss': 'css'   // Map .wxss to CSS mode
     };
@@ -740,4 +740,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSettingsControls();
     setupScrollButtons();
 });
+
 
